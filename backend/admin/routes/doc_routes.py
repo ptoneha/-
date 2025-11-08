@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from pydantic import BaseModel
 
-from admin.auth import require_editor
+from admin.auth_simple import require_editor
 from admin.services.doc_service import (
     list_docs, get_doc_detail, update_doc, delete_doc,
     batch_delete_docs, get_doc_stats
@@ -102,8 +102,8 @@ async def update_document(
 @router.delete("/{doc_id}")
 async def delete_document(
     doc_id: int,
-    hard_delete: bool = Query(False),
     request: Request,
+    hard_delete: bool = Query(False),
     current_user: dict = Depends(require_editor)
 ):
     """删除文档"""

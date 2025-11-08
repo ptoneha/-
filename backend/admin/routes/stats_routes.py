@@ -1,7 +1,7 @@
 """统计路由"""
 from fastapi import APIRouter, Query, Depends
 
-from admin.auth import require_editor
+from admin.auth_simple import require_editor
 from admin.services.stats_service import (
     get_system_stats, get_dashboard_data, get_content_distribution,
     get_quality_report, get_usage_stats

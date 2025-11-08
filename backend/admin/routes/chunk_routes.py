@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from pydantic import BaseModel
 
-from admin.auth import require_editor
+from admin.auth_simple import require_editor
 from admin.services.chunk_service import (
     list_chunks, get_chunk_detail, update_chunk, delete_chunk,
     batch_verify_chunks, batch_delete_chunks, get_chunk_stats
@@ -120,8 +120,8 @@ async def update_chunk_route(
 @router.delete("/{chunk_id}")
 async def delete_chunk_route(
     chunk_id: int,
-    hard_delete: bool = Query(False),
     request: Request,
+    hard_delete: bool = Query(False),
     current_user: dict = Depends(require_editor)
 ):
     """删除分片"""

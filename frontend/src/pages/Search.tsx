@@ -33,22 +33,25 @@ export default function SearchPage() {
       setLoading(true)
       if (dataset === 'kb') {
         const res = await apiSearch({ q: q || undefined, kind: kind || undefined, section, limit: pageSize, offset: (page - 1) * pageSize, neighbor: neighbor ? 1 : 0 })
-        setResults(res.results)
+        setResults(res.results || [])
         setTotal(res.total || 0)
       } else {
         const res = await searchQ({ q: q || undefined, limit: pageSize, offset: (page - 1) * pageSize })
-        setResults(res.results)
+        setResults(res.results || [])
         setTotal(res.total || 0)
       }
     } catch (e: any) {
+      console.error('搜索错误:', e)
       message.error(e?.response?.data?.detail || e?.message || '搜索失败')
+      setResults([])
+      setTotal(0)
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    // 初次进入页面自动加载最新分片
+    // 加载章节元数据
     (async () => {
       try {
         if (dataset === 'kb') {
@@ -58,22 +61,29 @@ export default function SearchPage() {
         } else {
           setSectionOptions([])
         }
-      } catch {}
-      await doSearch()
+      } catch (e) {
+        console.error('加载章节失败:', e)
+      }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataset])
 
   useEffect(() => {
-    // 当筛选条件变更时，重置到第 1 页
-    setPage(1)
+    // 当筛选条件变更时，重置到第 1 页并搜索
+    if (page === 1) {
+      doSearch()
+    } else {
+      setPage(1)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kind, section, neighbor, dataset])
+  }, [kind, section, neighbor, dataset, q])
 
   useEffect(() => {
-    doSearch()
+    // 页码变化时搜索
+    if (page !== 1) {
+      doSearch()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, pageSize, q, kind, section, neighbor, dataset])
+  }, [page])
 
   return (
     <div className="space-y-4">

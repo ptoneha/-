@@ -2,7 +2,7 @@
 from typing import Optional
 from fastapi import APIRouter, Query, Depends
 
-from admin.auth import require_admin
+from admin.auth_simple import require_admin
 from admin.services.audit_service import list_audit_logs, get_user_activity, get_action_stats
 
 

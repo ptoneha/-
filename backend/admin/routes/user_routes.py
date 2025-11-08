@@ -1,7 +1,7 @@
 """用户管理路由"""
 from fastapi import APIRouter, HTTPException, Query, Depends, Request
 
-from admin.auth import require_admin, require_superadmin
+from admin.auth_simple import require_admin, require_superadmin
 from admin.models.user import UserCreate, UserUpdate
 from admin.services.user_service import (
     list_users, get_user_by_id, create_user, update_user, delete_user

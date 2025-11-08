@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>API测试</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>ChaoX API 测试</h1>
+    <div id="results"></div>
+    
+    <script>
+        const baseURL = 'http://localhost:8787';
+        const results = document.getElementById('results');
+        
+        async function testAPI(name, url) {
+            const div = document.createElement('div');
+            div.className = 'test';
+            div.innerHTML = `<strong>${name}</strong><br>测试中...`;
+            results.appendChild(div);
+            
+            try {
+                const response = await fetch(baseURL + url);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    div.className = 'test success';
+                    div.innerHTML = `<strong>✅ ${name}</strong><br>状态: ${response.status}<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    div.className = 'test error';
+                    div.innerHTML = `<strong>❌ ${name}</strong><br>状态: ${response.status}<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (e) {
+                div.className = 'test error';
+                div.innerHTML = `<strong>❌ ${name}</strong><br>错误: ${e.message}`;
+            }
+        }
+        
+        // 运行测试
+        (async () => {
+            await testAPI('1. 健康检查', '/health');
+            await testAPI('2. 管理系统健康检查', '/admin/health');
+            await testAPI('3. 搜索API (无参数)', '/search?limit=5');
+            await testAPI('4. 章节元数据', '/meta/sections');
+            await testAPI('5. 管理统计', '/admin/stats/system');
+            await testAPI('6. 仪表板', '/admin/stats/dashboard');
+            await testAPI('7. 文档列表', '/admin/docs?limit=5');
+        })();
+    </script>
+</body>
+</html>
+

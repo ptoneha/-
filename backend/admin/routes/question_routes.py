@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from pydantic import BaseModel
 
-from admin.auth import require_editor
+from admin.auth_simple import require_editor
 from admin.services.question_service import (
     list_questions, get_question_detail, update_question, delete_question,
     batch_delete_questions, get_question_stats
@@ -113,8 +113,8 @@ async def update_question_route(
 @router.delete("/{qid}")
 async def delete_question_route(
     qid: int,
-    hard_delete: bool = Query(False),
     request: Request,
+    hard_delete: bool = Query(False),
     current_user: dict = Depends(require_editor)
 ):
     """删除题目"""

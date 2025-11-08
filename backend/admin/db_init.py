@@ -9,27 +9,28 @@ def init_admin_schema():
     try:
         conn.autocommit = True
         
-        # 读取SQL文件
+        # 读取SQL文件（优先使用fixed版本）
+        sql_file_fixed = os.path.join(os.path.dirname(__file__), "../admin_schema_fixed.sql")
         sql_file = os.path.join(os.path.dirname(__file__), "../admin_schema.sql")
         
-        if not os.path.exists(sql_file):
-            print(f"警告: 找不到 {sql_file}")
+        # 优先使用fixed版本
+        if os.path.exists(sql_file_fixed):
+            target_sql = sql_file_fixed
+        elif os.path.exists(sql_file):
+            target_sql = sql_file
+        else:
+            print(f"警告: 找不到SQL初始化文件")
             return
         
-        with open(sql_file, 'r', encoding='utf-8') as f:
+        with open(target_sql, 'r', encoding='utf-8') as f:
             sql_content = f.read()
         
-        # 分割并执行SQL语句
-        statements = sql_content.split(';')
-        
-        for statement in statements:
-            statement = statement.strip()
-            if statement and not statement.startswith('--'):
-                try:
-                    _execute(conn, statement)
-                except Exception as e:
-                    # 某些语句可能已经执行过，忽略错误
-                    print(f"执行SQL时出错（可能已存在）: {str(e)[:100]}")
+        # 直接执行整个SQL（PostgreSQL支持）
+        try:
+            _execute(conn, sql_content)
+            print(f"✓ 使用 {os.path.basename(target_sql)} 初始化成功")
+        except Exception as e:
+            print(f"执行SQL时出错: {str(e)}")
         
         print("✓ 管理系统数据库初始化完成")
         

@@ -6,7 +6,7 @@ from admin.models.user import UserLogin, UserResponse, UserPasswordChange
 from admin.services.user_service import authenticate_user, get_user_by_id, change_password
 from admin.services.audit_service import create_audit_log
 from admin.models.audit import AuditLogCreate
-from admin.auth import get_current_user
+from admin.auth_simple import get_current_user
 from utils.jwt_handler import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from fastapi import Depends
 
