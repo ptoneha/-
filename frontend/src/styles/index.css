@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'katex/dist/katex.min.css';
+
+html, body, #root { height: 100%; }
+
+.prose { line-height: 1.7; }
+
+/* 隐藏 KaTeX 的 HTML 版本，只显示 MathML 版本（避免重复显示） */
+.katex .katex-html {
+  display: none !important;
+}
+
+
+/* App background */
+body {
+  background: radial-gradient(1200px 600px at 20% -10%, rgba(99, 91, 255, 0.12), rgba(99, 91, 255, 0) 60%),
+              radial-gradient(800px 400px at 90% 0%, rgba(56, 189, 248, 0.12), rgba(56, 189, 248, 0) 60%),
+              #fafafa;
+}
+
+/* Header */
+.app-header {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.brand-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: conic-gradient(from 220deg at 50% 50%, #635bff, #60a5fa, #34d399, #f59e0b, #ef4444, #635bff);
+  box-shadow: 0 6px 20px rgba(99,91,255,0.25);
+}
+
+.brand-title {
+  font-weight: 700;
+  font-size: 16px;
+  background: linear-gradient(90deg, #1f2937, #111827);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-sub {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.content-area {
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(17, 24, 39, 0.06) !important;
+  box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08) !important;
+}
+
+/* Fine-tune antd Upload Dragger */
+.ant-upload-wrapper .ant-upload-drag {
+  border-color: rgba(99, 91, 255, 0.25);
+}
+.ant-upload-wrapper .ant-upload-drag:hover {
+  border-color: #635bff;
+}
+
+

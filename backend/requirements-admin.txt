@@ -1,0 +1,5 @@
+# 管理系统额外依赖
+bcrypt>=4.0.0
+pyjwt>=2.8.0
+email-validator>=2.0.0
+

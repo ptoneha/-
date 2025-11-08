@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  pg:
+    image: postgres:15-alpine
+    container_name: chaoX-postgres
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-chaox123456}
+      POSTGRES_DB: appdb
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    # 单用户优化：限制资源使用
+    deploy:
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 400M
+        reservations:
+          cpus: '0.3'
+          memory: 200M
+    # PostgreSQL优化配置
+    command: >
+      postgres
+      -c max_connections=10
+      -c shared_buffers=128MB
+      -c effective_cache_size=512MB
+      -c maintenance_work_mem=64MB
+      -c work_mem=4MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=8MB
+      -c random_page_cost=1.1
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d appdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chaoX-backend
+    ports:
+      - "8787:8787"
+    environment:
+      DATABASE_URL: postgresql://appuser:${DB_PASSWORD:-chaox123456}@pg:5432/appdb
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      # Python优化
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+    depends_on:
+      pg:
+        condition: service_healthy
+    restart: unless-stopped
+    # 单用户优化
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 400M
+        reservations:
+          cpus: '0.4'
+          memory: 200M
+    volumes:
+      - ./backend/static:/app/static
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8787/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # 可选：Nginx反向代理（推荐生产环境）
+  nginx:
+    image: nginx:alpine
+    container_name: chaoX-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx-single-user.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 100M
+
+networks:
+  default:
+    name: chaoX-network
+

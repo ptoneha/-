@@ -1,0 +1,294 @@
+### ChaoX 管理系统 API 测试请求
+### 使用 VS Code REST Client 插件或其他HTTP客户端
+
+### 变量定义
+@baseUrl = http://localhost:8787
+@token = YOUR_TOKEN_HERE
+
+### ============================================
+### 认证相关
+### ============================================
+
+### 1. 管理员登录
+POST {{baseUrl}}/admin/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### 2. 获取当前用户信息
+GET {{baseUrl}}/admin/auth/me
+Authorization: Bearer {{token}}
+
+### 3. 修改密码
+POST {{baseUrl}}/admin/auth/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "old_password": "admin123",
+  "new_password": "newpassword123"
+}
+
+### 4. 登出
+POST {{baseUrl}}/admin/auth/logout
+Authorization: Bearer {{token}}
+
+### ============================================
+### 文档管理
+### ============================================
+
+### 5. 获取文档列表
+GET {{baseUrl}}/admin/docs?limit=20&offset=0
+Authorization: Bearer {{token}}
+
+### 6. 搜索文档
+GET {{baseUrl}}/admin/docs?search=极限&source=kb
+Authorization: Bearer {{token}}
+
+### 7. 获取文档详情
+GET {{baseUrl}}/admin/docs/1
+Authorization: Bearer {{token}}
+
+### 8. 更新文档
+PUT {{baseUrl}}/admin/docs/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "更新后的标题",
+  "is_published": true
+}
+
+### 9. 删除文档（软删除）
+DELETE {{baseUrl}}/admin/docs/1?hard_delete=false
+Authorization: Bearer {{token}}
+
+### 10. 批量删除文档
+POST {{baseUrl}}/admin/docs/batch-delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "doc_ids": [1, 2, 3],
+  "hard_delete": false
+}
+
+### 11. 获取文档统计
+GET {{baseUrl}}/admin/docs/stats
+Authorization: Bearer {{token}}
+
+### ============================================
+### 分片管理
+### ============================================
+
+### 12. 获取分片列表
+GET {{baseUrl}}/admin/chunks?limit=20&offset=0
+Authorization: Bearer {{token}}
+
+### 13. 按文档ID筛选分片
+GET {{baseUrl}}/admin/chunks?doc_id=1
+Authorization: Bearer {{token}}
+
+### 14. 搜索分片
+GET {{baseUrl}}/admin/chunks?search=定理&kind=theorem
+Authorization: Bearer {{token}}
+
+### 15. 获取分片详情
+GET {{baseUrl}}/admin/chunks/1
+Authorization: Bearer {{token}}
+
+### 16. 更新分片
+PUT {{baseUrl}}/admin/chunks/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "content_md": "更新后的内容",
+  "is_verified": true,
+  "quality_score": 85
+}
+
+### 17. 批量审核分片
+POST {{baseUrl}}/admin/chunks/batch-verify
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "chunk_ids": [1, 2, 3],
+  "verified": true
+}
+
+### 18. 批量删除分片
+POST {{baseUrl}}/admin/chunks/batch-delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "chunk_ids": [1, 2, 3],
+  "hard_delete": false
+}
+
+### 19. 获取分片统计
+GET {{baseUrl}}/admin/chunks/stats
+Authorization: Bearer {{token}}
+
+### ============================================
+### 题库管理
+### ============================================
+
+### 20. 获取题目列表
+GET {{baseUrl}}/admin/questions?limit=20&offset=0
+Authorization: Bearer {{token}}
+
+### 21. 按难度筛选题目
+GET {{baseUrl}}/admin/questions?difficulty=2
+Authorization: Bearer {{token}}
+
+### 22. 获取题目详情
+GET {{baseUrl}}/admin/questions/1
+Authorization: Bearer {{token}}
+
+### 23. 更新题目
+PUT {{baseUrl}}/admin/questions/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "difficulty": 3,
+  "is_published": true
+}
+
+### 24. 删除题目
+DELETE {{baseUrl}}/admin/questions/1?hard_delete=false
+Authorization: Bearer {{token}}
+
+### 25. 批量删除题目
+POST {{baseUrl}}/admin/questions/batch-delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "qids": [1, 2, 3],
+  "hard_delete": false
+}
+
+### 26. 获取题库统计
+GET {{baseUrl}}/admin/questions/stats
+Authorization: Bearer {{token}}
+
+### ============================================
+### 用户管理（需要admin权限）
+### ============================================
+
+### 27. 获取用户列表
+GET {{baseUrl}}/admin/users?limit=50&offset=0
+Authorization: Bearer {{token}}
+
+### 28. 获取用户详情
+GET {{baseUrl}}/admin/users/1
+Authorization: Bearer {{token}}
+
+### 29. 创建新用户（需要superadmin）
+POST {{baseUrl}}/admin/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "neweditor",
+  "password": "password123",
+  "full_name": "新编辑",
+  "email": "editor@example.com",
+  "role": "editor"
+}
+
+### 30. 更新用户
+PUT {{baseUrl}}/admin/users/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "full_name": "更新后的名字",
+  "role": "editor"
+}
+
+### 31. 删除用户（需要superadmin）
+DELETE {{baseUrl}}/admin/users/2
+Authorization: Bearer {{token}}
+
+### ============================================
+### 统计分析
+### ============================================
+
+### 32. 获取系统统计
+GET {{baseUrl}}/admin/stats/system
+Authorization: Bearer {{token}}
+
+### 33. 获取仪表板数据
+GET {{baseUrl}}/admin/stats/dashboard
+Authorization: Bearer {{token}}
+
+### 34. 获取内容分布
+GET {{baseUrl}}/admin/stats/content-distribution
+Authorization: Bearer {{token}}
+
+### 35. 获取质量报告
+GET {{baseUrl}}/admin/stats/quality-report
+Authorization: Bearer {{token}}
+
+### 36. 获取使用统计（最近30天）
+GET {{baseUrl}}/admin/stats/usage?days=30
+Authorization: Bearer {{token}}
+
+### ============================================
+### 审计日志（需要admin权限）
+### ============================================
+
+### 37. 获取审计日志列表
+GET {{baseUrl}}/admin/audit/logs?limit=50&offset=0
+Authorization: Bearer {{token}}
+
+### 38. 按操作类型筛选日志
+GET {{baseUrl}}/admin/audit/logs?action=delete
+Authorization: Bearer {{token}}
+
+### 39. 按资源类型筛选日志
+GET {{baseUrl}}/admin/audit/logs?resource_type=doc
+Authorization: Bearer {{token}}
+
+### 40. 获取用户活动（最近7天）
+GET {{baseUrl}}/admin/audit/activity/1?days=7
+Authorization: Bearer {{token}}
+
+### 41. 获取操作统计
+GET {{baseUrl}}/admin/audit/action-stats?days=30
+Authorization: Bearer {{token}}
+
+### ============================================
+### 健康检查
+### ============================================
+
+### 42. 系统健康检查
+GET {{baseUrl}}/health
+
+### 43. 管理系统健康检查
+GET {{baseUrl}}/admin/health
+
+### ============================================
+### 用户端API（无需认证）
+### ============================================
+
+### 44. 搜索知识库
+GET {{baseUrl}}/search?q=极限&limit=10
+
+### 45. 获取分片详情
+GET {{baseUrl}}/chunks/1
+
+### 46. 获取章节统计
+GET {{baseUrl}}/meta/sections
+
+### 47. 搜索题库
+GET {{baseUrl}}/api/qbank/search?q=导数&limit=10
+
